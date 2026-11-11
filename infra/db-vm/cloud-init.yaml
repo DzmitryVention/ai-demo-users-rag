@@ -1,0 +1,83 @@
+#cloud-config
+# PostgreSQL on Container-Optimized OS (e2-micro, always-free tier).
+# Placeholders __POSTGRES_IMAGE__, __DB_USER__, __DB_NAME__, __SECRET__ and
+# __REGISTRY_HOST__ are substituted by infra/scripts/03-database.sh.
+#
+# - No external IP: the image comes from Artifact Registry and the password from
+#   Secret Manager over Private Google Access.
+# - Data lives on a separate persistent disk (device name "data") that survives
+#   VM re-creation.
+
+bootcmd:
+  - |
+    DEV=/dev/disk/by-id/google-data
+    # Format only a blank disk — never an existing filesystem.
+    blkid "$DEV" >/dev/null 2>&1 || mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard -L pgdata "$DEV"
+    mkdir -p /mnt/disks/data
+    mountpoint -q /mnt/disks/data || mount -o discard,defaults "$DEV" /mnt/disks/data
+    mkdir -p /mnt/disks/data/pgdata
+
+write_files:
+  - path: /etc/helpdesk/fetch-secret.sh
+    permissions: '0755'
+    owner: root
+    content: |
+      #!/bin/bash
+      # Reads the DB password from Secret Manager using the VM's service account
+      # into tmpfs (/run): never written to the persistent disk.
+      set -euo pipefail
+      install -d -m 711 /run/helpdesk-secrets
+      MD=http://metadata.google.internal/computeMetadata/v1
+      TOKEN=$(curl -sf -H 'Metadata-Flavor: Google' "$MD/instance/service-accounts/default/token" \
+        | tr -d '\n ' | sed -E 's/.*"access_token":"([^"]+)".*/\1/')
+      PROJECT=$(curl -sf -H 'Metadata-Flavor: Google' "$MD/project/project-id")
+      curl -sf -H "Authorization: Bearer $TOKEN" \
+        "https://secretmanager.googleapis.com/v1/projects/$PROJECT/secrets/__SECRET__/versions/latest:access" \
+        | tr -d '\n ' | sed -E 's/.*"data":"([^"]+)".*/\1/' | base64 -d > /run/helpdesk-secrets/db-password
+      # postgres (uid 70 in the alpine image) must be able to read it.
+      chown 70:70 /run/helpdesk-secrets/db-password
+      chmod 400 /run/helpdesk-secrets/db-password
+
+  - path: /etc/systemd/system/postgres.service
+    permissions: '0644'
+    owner: root
+    content: |
+      [Unit]
+      Description=PostgreSQL (container)
+      Wants=network-online.target
+      After=network-online.target docker.service
+      Requires=docker.service
+
+      [Service]
+      Environment=HOME=/home/postgres-svc
+      ExecStartPre=/bin/mkdir -p /home/postgres-svc
+      ExecStartPre=/usr/bin/docker-credential-gcr configure-docker --registries __REGISTRY_HOST__
+      ExecStartPre=/bin/bash /etc/helpdesk/fetch-secret.sh
+      ExecStartPre=-/usr/bin/docker rm -f postgres
+      ExecStart=/usr/bin/docker run --rm --name postgres \
+        -p 5432:5432 \
+        --shm-size=128m \
+        --log-driver=gcplogs \
+        -e POSTGRES_USER=__DB_USER__ \
+        -e POSTGRES_DB=__DB_NAME__ \
+        -e POSTGRES_PASSWORD_FILE=/run/secrets/db-password \
+        -v /mnt/disks/data/pgdata:/var/lib/postgresql \
+        -v /run/helpdesk-secrets:/run/secrets:ro \
+        __POSTGRES_IMAGE__ \
+        -c shared_buffers=128MB \
+        -c effective_cache_size=384MB \
+        -c work_mem=4MB \
+        -c maintenance_work_mem=32MB \
+        -c max_connections=40 \
+        -c password_encryption=scram-sha-256 \
+        -c log_min_duration_statement=500
+      ExecStop=/usr/bin/docker stop -t 30 postgres
+      Restart=always
+      RestartSec=5
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - systemctl daemon-reload
+  - systemctl enable --now postgres.service

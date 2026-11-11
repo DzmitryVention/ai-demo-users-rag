@@ -1,0 +1,18 @@
+# Builds the app image (API + SPA) and pushes it to Artifact Registry.
+#   gcloud builds submit --config infra/cloudbuild.yaml --substitutions _IMAGE=...,_TAG=...
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    env: ['DOCKER_BUILDKIT=1']
+    args:
+      - build
+      - --tag=${_IMAGE}:${_TAG}
+      - --tag=${_IMAGE}:latest
+      - --cache-from=${_IMAGE}:latest
+      - --build-arg=BUILDKIT_INLINE_CACHE=1
+      - .
+images: ['${_IMAGE}:${_TAG}', '${_IMAGE}:latest']
+options:
+  logging: CLOUD_LOGGING_ONLY
+  # e2-standard-2 (default) is the machine type covered by the free build minutes.
+timeout: 1200s

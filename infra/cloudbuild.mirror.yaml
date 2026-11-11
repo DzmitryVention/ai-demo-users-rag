@@ -1,0 +1,10 @@
+# Copies a public image into Artifact Registry so the DB VM (no internet access)
+# can pull it over Private Google Access.
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ['pull', '${_SOURCE}']
+  - name: gcr.io/cloud-builders/docker
+    args: ['tag', '${_SOURCE}', '${_TARGET}']
+images: ['${_TARGET}']
+options:
+  logging: CLOUD_LOGGING_ONLY

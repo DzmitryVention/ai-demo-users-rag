@@ -1,0 +1,7 @@
+node_modules
+dist
+coverage
+package-lock.json
+apps/api/drizzle/meta
+apps/api/drizzle/*.sql
+specs/001-users-helpdesk/contracts/openapi.json

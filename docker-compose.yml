@@ -1,0 +1,18 @@
+# Local development database (mirrors the PostgreSQL major used in GCP).
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: helpdesk
+      POSTGRES_PASSWORD: helpdesk
+      POSTGRES_DB: helpdesk
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U helpdesk']
+      interval: 5s
+      retries: 10
+volumes:
+  pgdata:

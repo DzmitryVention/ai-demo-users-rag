@@ -1,0 +1,2 @@
+# Cloud Build source upload: same exclusions as Docker.
+#!include:.dockerignore
