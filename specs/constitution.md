@@ -53,3 +53,16 @@ which are documented in `infra/README.md`.
 ## 7. Latest LTS runtimes
 
 Node.js uses the current Active LTS line; PostgreSQL uses the newest stable major.
+
+## 8. AI features
+
+- **Human in control:** every AI path can hand off to a person, and any error or
+  uncertainty fails closed to a human. AI is always disclosed to users as AI.
+- **Least privilege for models:** a model only sees data the requesting user may see,
+  selected by code (not by the model), and gets no tools unless a spec justifies each one.
+- **Grounded output:** user-facing AI answers cite approved sources; content is
+  validated against a schema before it is shown.
+- **Tested:** a prompt, model or knowledge change ships only after the checks the
+  feature's spec defines pass; results are recorded in the spec.
+- **Licensed knowledge only:** third-party content is ingested only with documented
+  permission and never committed to this public repository.
