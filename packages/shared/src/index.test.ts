@@ -21,9 +21,15 @@ describe('isAdminEmail', () => {
 });
 
 describe('nextStatusAfterMessage', () => {
-  it('admin reply → answered, user follow-up → open', () => {
+  it('admin or bot reply → answered, user follow-up → open', () => {
     expect(nextStatusAfterMessage('admin')).toBe('answered');
-    expect(nextStatusAfterMessage('user')).toBe('open');
+    expect(nextStatusAfterMessage('bot')).toBe('answered');
+    expect(nextStatusAfterMessage('user', 'answered')).toBe('open');
+  });
+
+  it('keeps a ticket waiting for a human when the user follows up', () => {
+    expect(nextStatusAfterMessage('user', 'pending_human')).toBe('pending_human');
+    expect(nextStatusAfterMessage('admin', 'pending_human')).toBe('answered');
   });
 });
 

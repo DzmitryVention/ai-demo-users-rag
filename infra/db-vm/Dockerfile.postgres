@@ -1,0 +1,14 @@
+# PostgreSQL 18 (same Alpine/musl base as before, so existing data files and text
+# collations stay valid) + pgvector built from source (spec 002 plan D7 / task T10).
+ARG POSTGRES_TAG=18-alpine
+FROM postgres:${POSTGRES_TAG}
+ARG PGVECTOR_VERSION=v0.8.7
+RUN set -eux; \
+    apk add --no-cache --virtual .build-deps git build-base; \
+    git clone --depth 1 --branch "${PGVECTOR_VERSION}" https://github.com/pgvector/pgvector.git /tmp/pgvector; \
+    cd /tmp/pgvector; \
+    # with_llvm=no: skip JIT bitcode so no matching clang/llvm toolchain is needed.
+    make OPTFLAGS="" with_llvm=no; \
+    make install with_llvm=no; \
+    cd /; rm -rf /tmp/pgvector; \
+    apk del .build-deps

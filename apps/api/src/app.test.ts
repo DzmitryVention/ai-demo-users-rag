@@ -1,4 +1,5 @@
 import { PGlite } from '@electric-sql/pglite';
+import { vector } from '@electric-sql/pglite-pgvector';
 import type { MeSchema, TicketDetail, UserListResponse } from '@app/shared';
 import { drizzle } from 'drizzle-orm/pglite';
 import { migrate } from 'drizzle-orm/pglite/migrator';
@@ -37,7 +38,7 @@ let app: Awaited<ReturnType<typeof buildApp>>;
 let client: PGlite;
 
 beforeAll(async () => {
-  client = new PGlite();
+  client = new PGlite({ extensions: { vector } });
   const db = drizzle({ client, schema, casing: 'snake_case' });
   await migrate(db, {
     migrationsFolder: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../drizzle'),

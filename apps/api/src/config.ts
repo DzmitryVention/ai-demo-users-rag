@@ -24,6 +24,16 @@ const EnvSchema = z.object({
   FIREBASE_APP_ID: z.string().default(''),
   /** Directory with the built SPA. When absent, the API serves only /api. */
   WEB_DIST_DIR: z.string().optional(),
+  // --- AI assistant (feature 002). Without GEMINI_API_KEY the assistant stays off.
+  GEMINI_API_KEY: z.string().optional(),
+  BOT_MODEL_ANSWER: z.string().default('gemini-3.8-flash'),
+  BOT_MODEL_TRIAGE: z.string().default('gemini-3.5-flash-lite'),
+  BOT_MODEL_EMBED: z.string().default('gemini-embedding-2'),
+  /** projects/{p}/locations/{r}/queues/{q}; when unset tasks run in-process (local dev). */
+  BOT_TASKS_QUEUE: z.string().optional(),
+  BOT_TASKS_SA: z.string().optional(),
+  /** Public URL of /internal/bot/tasks (Cloud Tasks target and OIDC audience). */
+  BOT_TASKS_URL: z.url().optional(),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

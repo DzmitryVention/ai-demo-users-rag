@@ -33,13 +33,15 @@ RUN --mount=type=cache,target=/root/.npm \
 FROM node:${NODE_VERSION}-slim AS runtime
 ENV NODE_ENV=production \
     PORT=8080 \
-    WEB_DIST_DIR=/app/web
+    WEB_DIST_DIR=/app/web \
+    KB_MANUAL_DIR=/app/apps/api/kb/demo-duster-manual
 WORKDIR /app
 COPY --from=prod-deps --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/apps/api/dist ./apps/api/dist
 COPY --from=build --chown=node:node /app/apps/api/drizzle ./apps/api/drizzle
+COPY --from=build --chown=node:node /app/apps/api/kb ./apps/api/kb
 COPY --from=build --chown=node:node /app/apps/web/dist ./web
 USER node
 EXPOSE 8080
-# The migrate job overrides this with: node apps/api/dist/migrate.js
+# Jobs override this: node apps/api/dist/migrate.js | node apps/api/dist/bot-setup.js
 CMD ["node", "--enable-source-maps", "apps/api/dist/server.js"]

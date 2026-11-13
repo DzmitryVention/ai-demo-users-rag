@@ -1,8 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
 import { clsx } from 'clsx';
-import { Inbox, LifeBuoy, LogOut, Moon, Sun, UserRound, Users } from 'lucide-react';
+import { Bot, Inbox, LifeBuoy, LogOut, Moon, Sun, UserRound, Users } from 'lucide-react';
 import { Suspense, useState } from 'react';
 import { Navigate, NavLink, Outlet, useLocation } from 'react-router';
 import { useAuth } from '../auth/AuthProvider.tsx';
+import { api } from '../lib/api.ts';
 import { fullName } from '../lib/format.ts';
 import { Avatar, Spinner } from './ui/index.tsx';
 
@@ -37,11 +39,13 @@ export function ThemeToggle() {
 
 export function Logo() {
   return (
-    <span className="flex items-center gap-2 font-semibold tracking-tight">
-      <span className="grid size-8 place-items-center rounded-lg bg-brand-600 text-white">
+    <span className="flex min-w-0 items-center gap-2 font-semibold tracking-tight">
+      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-brand-600 text-white">
         <LifeBuoy className="size-5" aria-hidden />
       </span>
-      Help desk
+      {/* Full name from the small breakpoint up; short name on phones. */}
+      <span className="hidden truncate sm:inline">Renault Duster help desk</span>
+      <span className="truncate sm:hidden">Duster help desk</span>
     </span>
   );
 }
@@ -57,6 +61,14 @@ const navItem = ({ isActive }: { isActive: boolean }) =>
 export function AppShell() {
   const { status, me, signOut } = useAuth();
   const location = useLocation();
+  // Badge with the number of requests waiting for a person (spec AC-3.1).
+  const overview = useQuery({
+    queryKey: ['admin', 'bot', 'overview'],
+    queryFn: api.admin.botOverview,
+    enabled: me?.role === 'admin',
+    refetchInterval: 60_000,
+  });
+  const pendingHuman = overview.data?.pendingHuman ?? 0;
   if (status === 'loading') return <Spinner label="Checking your session" />;
   if (!me) return <Navigate to="/" replace state={{ from: location.pathname }} />;
   const isAdmin = me.role === 'admin';
@@ -64,7 +76,8 @@ export function AppShell() {
   const links = isAdmin
     ? [
         { to: '/admin/users', label: 'Users', icon: Users },
-        { to: '/admin/tickets', label: 'Requests', icon: Inbox },
+        { to: '/admin/tickets', label: 'Requests', icon: Inbox, badge: pendingHuman },
+        { to: '/admin/assistant', label: 'Assistant', icon: Bot },
       ]
     : [
         { to: '/help', label: 'My requests', icon: Inbox },
@@ -88,12 +101,24 @@ export function AppShell() {
             </span>
           )}
           <nav aria-label="Main" className="flex items-center gap-1">
-            {links.map(({ to, label, icon: Icon }) => (
-              <NavLink key={to} to={to} end={to === '/help'} className={navItem}>
-                <Icon className="size-4" aria-hidden />
-                <span className="hidden sm:inline">{label}</span>
-              </NavLink>
-            ))}
+            {links.map((link) => {
+              const Icon = link.icon;
+              const badge = ('badge' in link ? link.badge : 0) ?? 0;
+              return (
+                <NavLink key={link.to} to={link.to} end={link.to === '/help'} className={navItem}>
+                  <Icon className="size-4" aria-hidden />
+                  <span className="hidden sm:inline">{link.label}</span>
+                  {badge > 0 && (
+                    <span
+                      className="rounded-full bg-violet-600 px-1.5 text-[10px] leading-4 font-semibold text-white"
+                      title={`${badge} request(s) need a human reply`}
+                    >
+                      {badge}
+                    </span>
+                  )}
+                </NavLink>
+              );
+            })}
           </nav>
           <div className="ml-auto flex items-center gap-2">
             <ThemeToggle />

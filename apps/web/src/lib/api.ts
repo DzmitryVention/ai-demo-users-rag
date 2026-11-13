@@ -1,6 +1,12 @@
 import {
   ErrorResponseSchema,
   type AdminUserDetail,
+  type BotOverview,
+  type BotRunListResponse,
+  type BotSettings,
+  type FeedbackValue,
+  type KbArticle,
+  type UpdateKbArticleInput,
   type CreateTicketInput,
   type ListTicketsQuery,
   type ListUsersQuery,
@@ -81,6 +87,12 @@ export const api = {
     reply: (id: string, body: string) =>
       request<TicketDetail>(`/tickets/${id}/messages`, { method: 'POST', json: { body } }),
     close: (id: string) => request<TicketDetail>(`/tickets/${id}/close`, { method: 'POST' }),
+    escalate: (id: string) => request<TicketDetail>(`/tickets/${id}/escalate`, { method: 'POST' }),
+    feedback: (id: string, messageId: string, value: FeedbackValue) =>
+      request<TicketDetail>(`/tickets/${id}/messages/${messageId}/feedback`, {
+        method: 'POST',
+        json: { value },
+      }),
   },
 
   admin: {
@@ -92,6 +104,18 @@ export const api = {
       request<TicketDetail>(`/admin/tickets/${id}/messages`, { method: 'POST', json: { body } }),
     setStatus: (id: string, status: TicketStatus) =>
       request<TicketDetail>(`/admin/tickets/${id}`, { method: 'PATCH', json: { status } }),
+    setBot: (id: string, enabled: boolean) =>
+      request<TicketDetail>(`/admin/tickets/${id}/bot`, { method: 'PATCH', json: { enabled } }),
+    botOverview: () => request<BotOverview>('/admin/bot/overview'),
+    saveBotSettings: (settings: BotSettings) =>
+      request<BotSettings>('/admin/bot/settings', { method: 'PUT', json: settings }),
+    botRuns: (q: { page?: number; pageSize?: number; ticketId?: string }) =>
+      request<BotRunListResponse>(`/admin/bot/runs${toQuery(q)}`),
+    articles: () => request<{ items: KbArticle[] }>('/admin/kb/articles'),
+    createArticle: (ticketId: string) =>
+      request<KbArticle>('/admin/kb/articles', { method: 'POST', json: { ticketId } }),
+    updateArticle: (id: string, input: UpdateKbArticleInput) =>
+      request<KbArticle>(`/admin/kb/articles/${id}`, { method: 'PATCH', json: input }),
   },
 };
 

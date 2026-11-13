@@ -13,7 +13,9 @@ AR_REPO="${AR_REPO:-${APP}}"
 REGISTRY="${REGION}-docker.pkg.dev/${PROJECT_ID}/${AR_REPO}"
 APP_IMAGE="${REGISTRY}/app"
 POSTGRES_VERSION="${POSTGRES_VERSION:-18}"
-POSTGRES_IMAGE="${REGISTRY}/postgres:${POSTGRES_VERSION}-alpine"
+PGVECTOR_VERSION="${PGVECTOR_VERSION:-v0.8.7}"
+# Postgres + pgvector, built on the same Alpine base (feature 002, plan D7).
+POSTGRES_IMAGE="${REGISTRY}/postgres-pgvector:${POSTGRES_VERSION}-${PGVECTOR_VERSION}"
 
 RUN_SERVICE="${RUN_SERVICE:-${APP}}"
 MIGRATE_JOB="${MIGRATE_JOB:-${APP}-migrate}"
@@ -29,6 +31,14 @@ BUILD_SA="${APP}-build@${PROJECT_ID}.iam.gserviceaccount.com"
 
 SECRET_DB_PASSWORD="${APP}-db-password"
 SECRET_DATABASE_URL="${APP}-database-url"
+SECRET_GEMINI_API_KEY="${APP}-gemini-api-key"
+
+# Feature 002: AI assistant
+TASKS_QUEUE="${TASKS_QUEUE:-${APP}-bot}"
+TASKS_SA="${APP}-tasks@${PROJECT_ID}.iam.gserviceaccount.com"
+SETUP_JOB="${SETUP_JOB:-${APP}-bot-setup}"
+# Set by the first bot setup run only (later changes are made by admins in the UI).
+BOT_INITIAL_MODE="${BOT_INITIAL_MODE:-live}"
 
 # Local, git-ignored overrides (e.g. ADMIN_EMAILS). See config.local.example.sh.
 _LOCAL_CONFIG="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/config.local.sh"

@@ -15,6 +15,20 @@
       "when": 1794414915566,
       "tag": "0001_seed_fake_users",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794495354687,
+      "tag": "0002_assistant_and_kb",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794495376575,
+      "tag": "0003_assistant_rls",
+      "breakpoints": true
     }
   ]
 }
