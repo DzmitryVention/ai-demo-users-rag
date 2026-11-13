@@ -1,0 +1,601 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1860" height="1340" viewBox="0 0 1860 1340" role="img" aria-labelledby="title desc">
+<title id="title">Database schema — helpdesk (features 001 and 002)</title>
+<desc id="desc">Entity relationship diagram of the shared PostgreSQL 18 database helpdesk: users and tickets (001), assistant tables and the knowledge base (002), enums, indexes and RLS.</desc>
+<rect x="0" y="0" width="1860" height="1340" rx="0" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="1"/>
+<text x="30" y="44" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="800" fill="#0F172A" text-anchor="start">Database schema — helpdesk (PostgreSQL 18 + pgvector)</text>
+<text x="30" y="68" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#475569" text-anchor="start">Features 001 + 002 · one shared database (D7) · source: apps/api/src/db/schema.ts, drizzle/0000–0003 · ? = nullable · crow&#x27;s foot notation</text>
+<rect x="32" y="113" width="310" height="216" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="30" y="110" width="310" height="216" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.4"/>
+<path d="M30 118 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#2563EB"/>
+<text x="42" y="130" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">users</text>
+<text x="330" y="129.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">001</text>
+<rect x="38" y="143" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="48" y="152.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<text x="84" y="153" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">id</text>
+<text x="330" y="153" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="31" y="158" width="308" height="18" fill="#F8FAFC"/>
+<rect x="38" y="161" width="20" height="12" rx="3" fill="#0F766E"/>
+<text x="48" y="170.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">UQ</text>
+<text x="84" y="171" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">firebase_uid</text>
+<text x="330" y="171" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text?</text>
+<rect x="38" y="179" width="20" height="12" rx="3" fill="#0F766E"/>
+<text x="48" y="188.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">UQ</text>
+<text x="84" y="189" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">email</text>
+<text x="330" y="189" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<rect x="31" y="194" width="308" height="18" fill="#F8FAFC"/>
+<text x="84" y="207" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">first_name</text>
+<text x="330" y="207" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<text x="84" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">last_name</text>
+<text x="330" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<rect x="31" y="230" width="308" height="18" fill="#F8FAFC"/>
+<text x="84" y="243" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">phone</text>
+<text x="330" y="243" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text?</text>
+<text x="84" y="261" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">about</text>
+<text x="330" y="261" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text?</text>
+<rect x="31" y="266" width="308" height="18" fill="#F8FAFC"/>
+<text x="84" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">avatar_url</text>
+<text x="330" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text?</text>
+<text x="84" y="297" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">created_at</text>
+<text x="330" y="297" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz</text>
+<rect x="31" y="302" width="308" height="18" fill="#F8FAFC"/>
+<text x="84" y="315" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">updated_at</text>
+<text x="330" y="315" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz</text>
+<rect x="32" y="371" width="310" height="72" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="30" y="368" width="310" height="72" rx="8" fill="#FFFFFF" stroke="#64748B" stroke-width="1.4" stroke-dasharray="5 3"/>
+<path d="M30 376 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#64748B"/>
+<text x="42" y="388" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">bot_requester</text>
+<text x="330" y="387.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">view · 002</text>
+<text x="84" y="411" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">id</text>
+<text x="330" y="411" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="31" y="416" width="308" height="18" fill="#F8FAFC"/>
+<text x="84" y="429" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">first_name</text>
+<text x="330" y="429" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<rect x="32" y="489" width="310" height="198" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="30" y="486" width="310" height="198" rx="8" fill="#FFFFFF" stroke="#7C3AED" stroke-width="1.4"/>
+<path d="M30 494 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#7C3AED"/>
+<text x="42" y="506" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">bot_settings</text>
+<text x="330" y="505.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">002 · single row id = 1</text>
+<rect x="38" y="519" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="48" y="528.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<text x="84" y="529" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">id</text>
+<text x="330" y="529" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">smallint</text>
+<rect x="31" y="534" width="308" height="18" fill="#F8FAFC"/>
+<text x="84" y="547" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">mode</text>
+<text x="330" y="547" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">bot_mode</text>
+<text x="84" y="565" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">persona_name</text>
+<text x="330" y="565" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<rect x="31" y="570" width="308" height="18" fill="#F8FAFC"/>
+<text x="84" y="583" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">min_relevance</text>
+<text x="330" y="583" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">numeric</text>
+<text x="84" y="601" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">max_turns_per_ticket</text>
+<text x="330" y="601" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">integer</text>
+<rect x="31" y="606" width="308" height="18" fill="#F8FAFC"/>
+<text x="84" y="619" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">max_runs_per_user_per_day</text>
+<text x="330" y="619" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">integer</text>
+<text x="84" y="637" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">monthly_budget_usd</text>
+<text x="330" y="637" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">numeric</text>
+<rect x="31" y="642" width="308" height="18" fill="#F8FAFC"/>
+<rect x="38" y="645" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="48" y="654.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="84" y="655" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">updated_by</text>
+<text x="330" y="655" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid?</text>
+<text x="84" y="673" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">updated_at</text>
+<text x="330" y="673" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz</text>
+<rect x="412" y="113" width="310" height="216" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="410" y="110" width="310" height="216" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.4"/>
+<path d="M410 118 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#2563EB"/>
+<text x="422" y="130" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">tickets</text>
+<rect x="680" y="117" width="30" height="16" rx="8" fill="#FFFFFF"/>
+<text x="695" y="129" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="800" fill="#2563EB" text-anchor="middle">RLS</text>
+<text x="674" y="129.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">001 + 002 cols</text>
+<rect x="418" y="143" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="428" y="152.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<text x="464" y="153" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">id</text>
+<text x="710" y="153" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="411" y="158" width="308" height="18" fill="#F8FAFC"/>
+<rect x="418" y="161" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="428" y="170.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="464" y="171" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">user_id</text>
+<text x="710" y="171" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<text x="464" y="189" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">subject</text>
+<text x="710" y="189" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<rect x="411" y="194" width="308" height="18" fill="#F8FAFC"/>
+<text x="464" y="207" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">status</text>
+<text x="710" y="207" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">ticket_status</text>
+<text x="464" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">bot_state</text>
+<text x="710" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">bot_state</text>
+<rect x="411" y="230" width="308" height="18" fill="#F8FAFC"/>
+<text x="464" y="243" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">bot_turns</text>
+<text x="710" y="243" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">integer</text>
+<text x="464" y="261" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">escalation_reason</text>
+<text x="710" y="261" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">escalation_reason?</text>
+<rect x="411" y="266" width="308" height="18" fill="#F8FAFC"/>
+<text x="464" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">escalated_at</text>
+<text x="710" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz?</text>
+<text x="464" y="297" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">created_at</text>
+<text x="710" y="297" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz</text>
+<rect x="411" y="302" width="308" height="18" fill="#F8FAFC"/>
+<text x="464" y="315" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">updated_at</text>
+<text x="710" y="315" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz</text>
+<rect x="412" y="371" width="310" height="108" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="410" y="368" width="310" height="108" rx="8" fill="#FFFFFF" stroke="#7C3AED" stroke-width="1.4"/>
+<path d="M410 376 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#7C3AED"/>
+<text x="422" y="388" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">ticket_summaries</text>
+<rect x="680" y="375" width="30" height="16" rx="8" fill="#FFFFFF"/>
+<text x="695" y="387" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="800" fill="#7C3AED" text-anchor="middle">RLS</text>
+<text x="674" y="387.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">002</text>
+<rect x="418" y="401" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="428" y="410.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<rect x="440" y="401" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="450" y="410.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="464" y="411" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">ticket_id</text>
+<text x="710" y="411" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="411" y="416" width="308" height="18" fill="#F8FAFC"/>
+<rect x="418" y="419" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="428" y="428.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="464" y="429" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">user_id</text>
+<text x="710" y="429" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<text x="464" y="447" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">summary</text>
+<text x="710" y="447" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<rect x="411" y="452" width="308" height="18" fill="#F8FAFC"/>
+<text x="464" y="465" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">updated_at</text>
+<text x="710" y="465" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz</text>
+<rect x="412" y="511" width="310" height="252" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="410" y="508" width="310" height="252" rx="8" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.4"/>
+<path d="M410 516 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#2563EB"/>
+<text x="422" y="528" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">ticket_messages</text>
+<rect x="680" y="515" width="30" height="16" rx="8" fill="#FFFFFF"/>
+<text x="695" y="527" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="800" fill="#2563EB" text-anchor="middle">RLS</text>
+<text x="674" y="527.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">001 + 002 cols</text>
+<rect x="418" y="541" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="428" y="550.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<text x="464" y="551" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">id</text>
+<text x="710" y="551" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="411" y="556" width="308" height="18" fill="#F8FAFC"/>
+<rect x="418" y="559" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="428" y="568.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="464" y="569" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">ticket_id</text>
+<text x="710" y="569" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="418" y="577" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="428" y="586.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="464" y="587" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">author_id</text>
+<text x="710" y="587" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid?</text>
+<rect x="411" y="592" width="308" height="18" fill="#F8FAFC"/>
+<text x="464" y="605" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">author_role</text>
+<text x="710" y="605" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">author_role</text>
+<text x="464" y="623" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">body</text>
+<text x="710" y="623" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<rect x="411" y="628" width="308" height="18" fill="#F8FAFC"/>
+<text x="464" y="641" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">visibility</text>
+<text x="710" y="641" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">message_visibility</text>
+<text x="464" y="659" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">persona_name</text>
+<text x="710" y="659" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text?</text>
+<rect x="411" y="664" width="308" height="18" fill="#F8FAFC"/>
+<text x="464" y="677" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">citations</text>
+<text x="710" y="677" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">jsonb?</text>
+<text x="464" y="695" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">notice</text>
+<text x="710" y="695" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text?</text>
+<rect x="411" y="700" width="308" height="18" fill="#F8FAFC"/>
+<rect x="418" y="703" width="20" height="12" rx="3" fill="#64748B"/>
+<text x="428" y="712.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">LK</text>
+<text x="464" y="713" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">bot_run_id</text>
+<text x="710" y="713" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid?</text>
+<text x="464" y="731" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">feedback</text>
+<text x="710" y="731" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">feedback_value?</text>
+<rect x="411" y="736" width="308" height="18" fill="#F8FAFC"/>
+<text x="464" y="749" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">created_at</text>
+<text x="710" y="749" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz</text>
+<rect x="792" y="113" width="310" height="342" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="790" y="110" width="310" height="342" rx="8" fill="#FFFFFF" stroke="#7C3AED" stroke-width="1.4"/>
+<path d="M790 118 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#7C3AED"/>
+<text x="802" y="130" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">bot_runs</text>
+<text x="1090" y="129.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">002 · audit</text>
+<rect x="798" y="143" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="808" y="152.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<text x="844" y="153" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">id</text>
+<text x="1090" y="153" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="791" y="158" width="308" height="18" fill="#F8FAFC"/>
+<rect x="798" y="161" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="808" y="170.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="844" y="171" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">ticket_id</text>
+<text x="1090" y="171" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="798" y="179" width="20" height="12" rx="3" fill="#0F766E"/>
+<text x="808" y="188.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">UQ</text>
+<rect x="820" y="179" width="20" height="12" rx="3" fill="#64748B"/>
+<text x="830" y="188.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">LK</text>
+<text x="844" y="189" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">message_id</text>
+<text x="1090" y="189" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="791" y="194" width="308" height="18" fill="#F8FAFC"/>
+<rect x="798" y="197" width="20" height="12" rx="3" fill="#64748B"/>
+<text x="808" y="206.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">LK</text>
+<text x="844" y="207" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">user_id</text>
+<text x="1090" y="207" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<text x="844" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">decision</text>
+<text x="1090" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">bot_decision</text>
+<rect x="791" y="230" width="308" height="18" fill="#F8FAFC"/>
+<text x="844" y="243" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">escalation_reason</text>
+<text x="1090" y="243" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">escalation_reason?</text>
+<text x="844" y="261" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">triage</text>
+<text x="1090" y="261" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">jsonb?</text>
+<rect x="791" y="266" width="308" height="18" fill="#F8FAFC"/>
+<text x="844" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">retrieved</text>
+<text x="1090" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">jsonb?</text>
+<text x="844" y="297" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">guardrails</text>
+<text x="1090" y="297" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">jsonb?</text>
+<rect x="791" y="302" width="308" height="18" fill="#F8FAFC"/>
+<text x="844" y="315" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">model_answer</text>
+<text x="1090" y="315" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text?</text>
+<text x="844" y="333" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">model_triage</text>
+<text x="1090" y="333" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text?</text>
+<rect x="791" y="338" width="308" height="18" fill="#F8FAFC"/>
+<text x="844" y="351" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">prompt_version</text>
+<text x="1090" y="351" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text?</text>
+<text x="844" y="369" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">input_tokens</text>
+<text x="1090" y="369" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">integer</text>
+<rect x="791" y="374" width="308" height="18" fill="#F8FAFC"/>
+<text x="844" y="387" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">output_tokens</text>
+<text x="1090" y="387" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">integer</text>
+<text x="844" y="405" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">cost_usd</text>
+<text x="1090" y="405" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">numeric(10,6)</text>
+<rect x="791" y="410" width="308" height="18" fill="#F8FAFC"/>
+<text x="844" y="423" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">latency_ms</text>
+<text x="1090" y="423" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">integer</text>
+<text x="844" y="441" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">created_at</text>
+<text x="1090" y="441" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz</text>
+<rect x="792" y="511" width="310" height="234" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="790" y="508" width="310" height="234" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.4"/>
+<path d="M790 516 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#059669"/>
+<text x="802" y="528" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">kb_articles</text>
+<rect x="1060" y="515" width="30" height="16" rx="8" fill="#FFFFFF"/>
+<text x="1075" y="527" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="800" fill="#059669" text-anchor="middle">RLS</text>
+<text x="1054" y="527.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">002</text>
+<rect x="798" y="541" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="808" y="550.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<text x="844" y="551" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">id</text>
+<text x="1090" y="551" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="791" y="556" width="308" height="18" fill="#F8FAFC"/>
+<text x="844" y="569" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">question</text>
+<text x="1090" y="569" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<text x="844" y="587" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">answer</text>
+<text x="1090" y="587" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<rect x="791" y="592" width="308" height="18" fill="#F8FAFC"/>
+<rect x="798" y="595" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="808" y="604.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="844" y="605" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">source_ticket_id</text>
+<text x="1090" y="605" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid?</text>
+<text x="844" y="623" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">status</text>
+<text x="1090" y="623" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">kb_article_status</text>
+<rect x="791" y="628" width="308" height="18" fill="#F8FAFC"/>
+<rect x="798" y="631" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="808" y="640.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="844" y="641" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">created_by</text>
+<text x="1090" y="641" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid?</text>
+<rect x="798" y="649" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="808" y="658.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="844" y="659" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">approved_by</text>
+<text x="1090" y="659" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid?</text>
+<rect x="791" y="664" width="308" height="18" fill="#F8FAFC"/>
+<text x="844" y="677" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">embedding</text>
+<text x="1090" y="677" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">vector(768)?</text>
+<text x="844" y="695" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">tsv</text>
+<text x="1090" y="695" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">tsvector (gen)?</text>
+<rect x="791" y="700" width="308" height="18" fill="#F8FAFC"/>
+<text x="844" y="713" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">created_at</text>
+<text x="1090" y="713" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz</text>
+<text x="844" y="731" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">approved_at</text>
+<text x="1090" y="731" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz?</text>
+<rect x="1172" y="113" width="310" height="216" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="1170" y="110" width="310" height="216" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.4"/>
+<path d="M1170 118 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#059669"/>
+<text x="1182" y="130" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">kb_sources</text>
+<text x="1470" y="129.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">002</text>
+<rect x="1178" y="143" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="1188" y="152.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<text x="1224" y="153" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">id</text>
+<text x="1470" y="153" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="1171" y="158" width="308" height="18" fill="#F8FAFC"/>
+<text x="1224" y="171" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">title</text>
+<text x="1470" y="171" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<text x="1224" y="189" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">edition</text>
+<text x="1470" y="189" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<rect x="1171" y="194" width="308" height="18" fill="#F8FAFC"/>
+<text x="1224" y="207" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">language</text>
+<text x="1470" y="207" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<text x="1224" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">origin_url</text>
+<text x="1470" y="225" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text?</text>
+<rect x="1171" y="230" width="308" height="18" fill="#F8FAFC"/>
+<text x="1224" y="243" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">content_hash</text>
+<text x="1470" y="243" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<text x="1224" y="261" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">status</text>
+<text x="1470" y="261" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">kb_source_status</text>
+<rect x="1171" y="266" width="308" height="18" fill="#F8FAFC"/>
+<text x="1224" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">licence_ref</text>
+<text x="1470" y="279" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<text x="1224" y="297" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">is_demo</text>
+<text x="1470" y="297" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">boolean</text>
+<rect x="1171" y="302" width="308" height="18" fill="#F8FAFC"/>
+<text x="1224" y="315" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">ingested_at</text>
+<text x="1470" y="315" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">timestamptz</text>
+<rect x="1172" y="371" width="310" height="216" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="1170" y="368" width="310" height="216" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.4"/>
+<path d="M1170 376 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#059669"/>
+<text x="1182" y="388" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">kb_sections</text>
+<text x="1470" y="387.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">002 · tree</text>
+<rect x="1178" y="401" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="1188" y="410.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<text x="1224" y="411" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">id</text>
+<text x="1470" y="411" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="1171" y="416" width="308" height="18" fill="#F8FAFC"/>
+<rect x="1178" y="419" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="1188" y="428.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="1224" y="429" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">source_id</text>
+<text x="1470" y="429" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="1178" y="437" width="20" height="12" rx="3" fill="#64748B"/>
+<text x="1188" y="446.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">LK</text>
+<text x="1224" y="447" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">parent_id</text>
+<text x="1470" y="447" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid?</text>
+<rect x="1171" y="452" width="308" height="18" fill="#F8FAFC"/>
+<text x="1224" y="465" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">level</text>
+<text x="1470" y="465" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">smallint</text>
+<text x="1224" y="483" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">ordinal</text>
+<text x="1470" y="483" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">integer</text>
+<rect x="1171" y="488" width="308" height="18" fill="#F8FAFC"/>
+<rect x="1178" y="491" width="20" height="12" rx="3" fill="#0F766E"/>
+<text x="1188" y="500.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">UQ</text>
+<text x="1224" y="501" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">external_key</text>
+<text x="1470" y="501" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<text x="1224" y="519" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">title</text>
+<text x="1470" y="519" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<rect x="1171" y="524" width="308" height="18" fill="#F8FAFC"/>
+<text x="1224" y="537" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">path</text>
+<text x="1470" y="537" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<text x="1224" y="555" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">url</text>
+<text x="1470" y="555" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text?</text>
+<rect x="1171" y="560" width="308" height="18" fill="#F8FAFC"/>
+<text x="1224" y="573" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">warnings</text>
+<text x="1470" y="573" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">jsonb</text>
+<rect x="1172" y="629" width="310" height="90" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="1170" y="626" width="310" height="90" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.4"/>
+<path d="M1170 634 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#059669"/>
+<text x="1182" y="646" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">kb_links</text>
+<text x="1470" y="645.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">002 · cross-refs</text>
+<rect x="1178" y="659" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="1188" y="668.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<rect x="1200" y="659" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="1210" y="668.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="1224" y="669" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">from_section_id</text>
+<text x="1470" y="669" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="1171" y="674" width="308" height="18" fill="#F8FAFC"/>
+<rect x="1178" y="677" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="1188" y="686.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<rect x="1200" y="677" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="1210" y="686.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="1224" y="687" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">to_section_id</text>
+<text x="1470" y="687" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<text x="1224" y="705" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">anchor_text</text>
+<text x="1470" y="705" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<rect x="1532" y="371" width="310" height="180" rx="8" fill="#0F172A" opacity="0.06"/>
+<rect x="1530" y="368" width="310" height="180" rx="8" fill="#FFFFFF" stroke="#059669" stroke-width="1.4"/>
+<path d="M1530 376 a8 8 0 0 1 8 -8 h294 a8 8 0 0 1 8 8 v22 h-310 z" fill="#059669"/>
+<text x="1542" y="388" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="start">kb_chunks</text>
+<text x="1830" y="387.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#FFFFFF" text-anchor="end">002</text>
+<rect x="1538" y="401" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="1548" y="410.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<text x="1584" y="411" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">id</text>
+<text x="1830" y="411" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<rect x="1531" y="416" width="308" height="18" fill="#F8FAFC"/>
+<rect x="1538" y="419" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="1548" y="428.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="1584" y="429" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">section_id</text>
+<text x="1830" y="429" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">uuid</text>
+<text x="1584" y="447" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">ordinal</text>
+<text x="1830" y="447" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">integer</text>
+<rect x="1531" y="452" width="308" height="18" fill="#F8FAFC"/>
+<text x="1584" y="465" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">text</text>
+<text x="1830" y="465" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<text x="1584" y="483" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">token_count</text>
+<text x="1830" y="483" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">integer</text>
+<rect x="1531" y="488" width="308" height="18" fill="#F8FAFC"/>
+<text x="1584" y="501" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">embedding</text>
+<text x="1830" y="501" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">vector(768)</text>
+<text x="1584" y="519" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">tsv</text>
+<text x="1830" y="519" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">tsvector (gen)?</text>
+<rect x="1531" y="524" width="308" height="18" fill="#F8FAFC"/>
+<text x="1584" y="537" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#0F172A" text-anchor="start">content_hash</text>
+<text x="1830" y="537" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10.5" font-weight="400" fill="#475569" text-anchor="end">text</text>
+<path d="M 340 149 L 352 149 L 352 167 L 410 167" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="347" y1="143" x2="347" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="352" y1="143" x2="352" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="398" y1="167" x2="410" y2="161" stroke="#334155" stroke-width="1.4"/>
+<line x1="398" y1="167" x2="410" y2="173" stroke="#334155" stroke-width="1.4"/>
+<circle cx="393" cy="167" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 340 149 L 366 149 L 366 425 L 410 425" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="347" y1="143" x2="347" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="352" y1="143" x2="352" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="398" y1="425" x2="410" y2="419" stroke="#334155" stroke-width="1.4"/>
+<line x1="398" y1="425" x2="410" y2="431" stroke="#334155" stroke-width="1.4"/>
+<circle cx="393" cy="425" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 340 149 L 380 149 L 380 583 L 410 583" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="347" y1="143" x2="347" y2="155" stroke="#334155" stroke-width="1.4"/>
+<circle cx="356" cy="149" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<line x1="398" y1="583" x2="410" y2="577" stroke="#334155" stroke-width="1.4"/>
+<line x1="398" y1="583" x2="410" y2="589" stroke="#334155" stroke-width="1.4"/>
+<circle cx="393" cy="583" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 340 149 L 394 149 L 394 860 L 768 860 L 768 637 L 790 637" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="347" y1="143" x2="347" y2="155" stroke="#334155" stroke-width="1.4"/>
+<circle cx="356" cy="149" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<line x1="778" y1="637" x2="790" y2="631" stroke="#334155" stroke-width="1.4"/>
+<line x1="778" y1="637" x2="790" y2="643" stroke="#334155" stroke-width="1.4"/>
+<circle cx="773" cy="637" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 340 149 L 394 149 L 394 870 L 760 870 L 760 655 L 790 655" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="347" y1="143" x2="347" y2="155" stroke="#334155" stroke-width="1.4"/>
+<circle cx="356" cy="149" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<line x1="778" y1="655" x2="790" y2="649" stroke="#334155" stroke-width="1.4"/>
+<line x1="778" y1="655" x2="790" y2="661" stroke="#334155" stroke-width="1.4"/>
+<circle cx="773" cy="655" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="560" y="854" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#334155" text-anchor="middle" font-style="italic">kb_articles.created_by / approved_by → users.id (SET NULL)</text>
+<path d="M 30 149 L 16 149 L 16 651 L 30 651" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="23" y1="143" x2="23" y2="155" stroke="#334155" stroke-width="1.4"/>
+<circle cx="14" cy="149" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<line x1="18" y1="651" x2="30" y2="645" stroke="#334155" stroke-width="1.4"/>
+<line x1="18" y1="651" x2="30" y2="657" stroke="#334155" stroke-width="1.4"/>
+<circle cx="13" cy="651" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 185 326 L 185 366" stroke="#64748B" stroke-width="1.4" stroke-dasharray="5 3" fill="none"/>
+<text x="193" y="348" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#64748B" text-anchor="start" font-style="italic">view: requester only (app.requester_id)</text>
+<path d="M 720 149 L 734 149 L 734 407 L 720 407" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="727" y1="143" x2="727" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="732" y1="143" x2="732" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="727" y1="401" x2="727" y2="413" stroke="#334155" stroke-width="1.4"/>
+<circle cx="736" cy="407" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 720 149 L 734 149 L 734 565 L 720 565" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="727" y1="143" x2="727" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="732" y1="143" x2="732" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="732" y1="565" x2="720" y2="559" stroke="#334155" stroke-width="1.4"/>
+<line x1="732" y1="565" x2="720" y2="571" stroke="#334155" stroke-width="1.4"/>
+<circle cx="737" cy="565" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 720 149 L 734 149 L 734 167 L 790 167" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="727" y1="143" x2="727" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="732" y1="143" x2="732" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="778" y1="167" x2="790" y2="161" stroke="#334155" stroke-width="1.4"/>
+<line x1="778" y1="167" x2="790" y2="173" stroke="#334155" stroke-width="1.4"/>
+<circle cx="773" cy="167" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 720 149 L 734 149 L 734 601 L 790 601" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="727" y1="143" x2="727" y2="155" stroke="#334155" stroke-width="1.4"/>
+<circle cx="736" cy="149" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<line x1="778" y1="601" x2="790" y2="595" stroke="#334155" stroke-width="1.4"/>
+<line x1="778" y1="601" x2="790" y2="607" stroke="#334155" stroke-width="1.4"/>
+<circle cx="773" cy="601" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 720 709 L 748 709 L 748 185 L 790 185" fill="none" stroke="#64748B" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="727" y1="703" x2="727" y2="715" stroke="#64748B" stroke-width="1.4"/>
+<circle cx="736" cy="709" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.4"/>
+<line x1="783" y1="179" x2="783" y2="191" stroke="#64748B" stroke-width="1.4"/>
+<circle cx="774" cy="185" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.4"/>
+<path d="M 1170 149 L 1132 149 L 1132 425 L 1170 425" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="1163" y1="143" x2="1163" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="1158" y1="143" x2="1158" y2="155" stroke="#334155" stroke-width="1.4"/>
+<line x1="1158" y1="425" x2="1170" y2="419" stroke="#334155" stroke-width="1.4"/>
+<line x1="1158" y1="425" x2="1170" y2="431" stroke="#334155" stroke-width="1.4"/>
+<circle cx="1153" cy="425" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 1170 407 L 1150 407 L 1150 443 L 1170 443" fill="none" stroke="#64748B" stroke-width="1.4" stroke-dasharray="5 3"/>
+<line x1="1163" y1="401" x2="1163" y2="413" stroke="#64748B" stroke-width="1.4"/>
+<circle cx="1154" cy="407" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.4"/>
+<line x1="1158" y1="443" x2="1170" y2="437" stroke="#64748B" stroke-width="1.4"/>
+<line x1="1158" y1="443" x2="1170" y2="449" stroke="#64748B" stroke-width="1.4"/>
+<circle cx="1153" cy="443" r="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.4"/>
+<path d="M 1480 407 L 1518 407 L 1518 425 L 1530 425" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="1487" y1="401" x2="1487" y2="413" stroke="#334155" stroke-width="1.4"/>
+<line x1="1492" y1="401" x2="1492" y2="413" stroke="#334155" stroke-width="1.4"/>
+<line x1="1518" y1="425" x2="1530" y2="419" stroke="#334155" stroke-width="1.4"/>
+<line x1="1518" y1="425" x2="1530" y2="431" stroke="#334155" stroke-width="1.4"/>
+<circle cx="1513" cy="425" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 1480 407 L 1504 407 L 1504 665 L 1480 665" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="1487" y1="401" x2="1487" y2="413" stroke="#334155" stroke-width="1.4"/>
+<line x1="1492" y1="401" x2="1492" y2="413" stroke="#334155" stroke-width="1.4"/>
+<line x1="1492" y1="665" x2="1480" y2="659" stroke="#334155" stroke-width="1.4"/>
+<line x1="1492" y1="665" x2="1480" y2="671" stroke="#334155" stroke-width="1.4"/>
+<circle cx="1497" cy="665" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<path d="M 1480 407 L 1504 407 L 1504 683 L 1480 683" fill="none" stroke="#334155" stroke-width="1.4"/>
+<line x1="1487" y1="401" x2="1487" y2="413" stroke="#334155" stroke-width="1.4"/>
+<line x1="1492" y1="401" x2="1492" y2="413" stroke="#334155" stroke-width="1.4"/>
+<line x1="1492" y1="683" x2="1480" y2="677" stroke="#334155" stroke-width="1.4"/>
+<line x1="1492" y1="683" x2="1480" y2="689" stroke="#334155" stroke-width="1.4"/>
+<circle cx="1497" cy="683" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="1170" y="736" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="400" fill="#334155" text-anchor="start" font-style="italic">from_section_id, to_section_id → kb_sections.id</text>
+<rect x="1530" y="110" width="310" height="252" rx="10" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1"/>
+<text x="1544" y="134" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A" text-anchor="start">Indexes</text>
+<text x="1544" y="156" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">users: UQ lower(email); created_at</text>
+<text x="1544" y="173" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">tickets: (user_id, updated_at desc)</text>
+<text x="1544" y="190" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">  (status, updated_at desc)</text>
+<text x="1544" y="207" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">  (status, escalated_at)</text>
+<text x="1544" y="224" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">ticket_messages: (ticket_id, created_at)</text>
+<text x="1544" y="241" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">ticket_summaries: (user_id, updated_at desc)</text>
+<text x="1544" y="258" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">bot_runs: UQ message_id; (user_id, created_at)</text>
+<text x="1544" y="275" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">kb_sources: UQ status WHERE status = &#x27;active&#x27;</text>
+<text x="1544" y="292" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">kb_sections: UQ (source_id, external_key)</text>
+<text x="1544" y="309" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">kb_chunks: HNSW embedding vector_cosine_ops</text>
+<text x="1544" y="326" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">  GIN tsv; section_id</text>
+<text x="1544" y="343" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#475569" text-anchor="start">kb_articles: HNSW embedding; GIN tsv</text>
+<rect x="1530" y="560" width="310" height="190" rx="10" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1"/>
+<text x="1544" y="584" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A" text-anchor="start">Row-level security (role helpdesk_bot)</text>
+<text x="1544" y="606" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">NOLOGIN role, SELECT only. Pipeline uses</text>
+<text x="1544" y="623" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">SET LOCAL ROLE + app.requester_id.</text>
+<text x="1544" y="640" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">tickets: user_id = requester</text>
+<text x="1544" y="657" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">ticket_messages: public + own tickets</text>
+<text x="1544" y="674" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">ticket_summaries: user_id = requester</text>
+<text x="1544" y="691" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">kb_articles: status = &#x27;approved&#x27;</text>
+<text x="1544" y="708" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">kb_sources/sections/links/chunks: all rows</text>
+<text x="1544" y="725" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="400" fill="#475569" text-anchor="start">API connects as owner (RLS bypassed).</text>
+<rect x="18" y="950" width="1824" height="220" rx="12" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1"/>
+<text x="34" y="976" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#0F172A" text-anchor="start">Enums</text>
+<text x="34" y="1004" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">ticket_status</text>
+<text x="184" y="1004" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#475569" text-anchor="start">open · answered · pending_human · closed</text>
+<text x="624" y="1004" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">author_role</text>
+<text x="774" y="1004" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#475569" text-anchor="start">user · admin · bot</text>
+<text x="1214" y="1004" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">bot_state</text>
+<text x="1364" y="1004" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#475569" text-anchor="start">idle · queued · running · disabled</text>
+<text x="34" y="1030" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">message_visibility</text>
+<text x="184" y="1030" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#475569" text-anchor="start">public · internal</text>
+<text x="624" y="1030" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">feedback_value</text>
+<text x="774" y="1030" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#475569" text-anchor="start">helpful · not_helpful</text>
+<text x="1214" y="1030" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">bot_decision</text>
+<text x="1364" y="1030" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#475569" text-anchor="start">answered · escalated · skipped</text>
+<text x="34" y="1056" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">bot_mode</text>
+<text x="184" y="1056" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#475569" text-anchor="start">off · live</text>
+<text x="624" y="1056" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">kb_source_status</text>
+<text x="774" y="1056" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#475569" text-anchor="start">ingesting · active · retired</text>
+<text x="1214" y="1056" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">kb_article_status</text>
+<text x="1364" y="1056" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#475569" text-anchor="start">draft · approved · archived</text>
+<text x="34" y="1090" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="700" fill="#0F172A" text-anchor="start">escalation_reason</text>
+<text x="184" y="1090" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#475569" text-anchor="start">no_relevant_source · out_of_scope · unsupported_language · injection_suspected · abusive · user_requested · not_helpful</text>
+<text x="184" y="1116" font-family="'JetBrains Mono', Menlo, Consolas, monospace" font-size="11" font-weight="400" fill="#475569" text-anchor="start">max_turns · quota_exceeded · budget_exceeded · model_refusal · guardrail_failed · error</text>
+<rect x="18" y="1190" width="1824" height="130" rx="12" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1"/>
+<text x="34" y="1216" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#0F172A" text-anchor="start">Legend</text>
+<rect x="34" y="1234" width="28" height="16" rx="4" fill="#2563EB" stroke="#2563EB" stroke-width="1"/>
+<text x="70" y="1247" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">001 core tables</text>
+<rect x="234" y="1234" width="28" height="16" rx="4" fill="#7C3AED" stroke="#7C3AED" stroke-width="1"/>
+<text x="270" y="1247" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">002 assistant tables</text>
+<rect x="434" y="1234" width="28" height="16" rx="4" fill="#059669" stroke="#059669" stroke-width="1"/>
+<text x="470" y="1247" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">002 knowledge base</text>
+<rect x="634" y="1234" width="28" height="16" rx="4" fill="#64748B" stroke="#64748B" stroke-width="1" stroke-dasharray="4 2"/>
+<text x="670" y="1247" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">View</text>
+<rect x="34" y="1266" width="20" height="12" rx="3" fill="#B45309"/>
+<text x="44" y="1275.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">PK</text>
+<text x="62" y="1276" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">primary key</text>
+<rect x="284" y="1266" width="20" height="12" rx="3" fill="#2563EB"/>
+<text x="294" y="1275.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">FK</text>
+<text x="312" y="1276" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">foreign key</text>
+<rect x="534" y="1266" width="20" height="12" rx="3" fill="#0F766E"/>
+<text x="544" y="1275.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">UQ</text>
+<text x="562" y="1276" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">unique (* = expression / composite)</text>
+<rect x="834" y="1266" width="20" height="12" rx="3" fill="#64748B"/>
+<text x="844" y="1275.5" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="8" font-weight="800" fill="#FFFFFF" text-anchor="middle">LK</text>
+<text x="862" y="1276" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">logical link, no FK (see below)</text>
+<line x1="1040" y1="1242" x2="1110" y2="1242" stroke="#334155" stroke-width="1.4"/>
+<line x1="1047" y1="1236" x2="1047" y2="1248" stroke="#334155" stroke-width="1.4"/>
+<line x1="1052" y1="1236" x2="1052" y2="1248" stroke="#334155" stroke-width="1.4"/>
+<line x1="1098" y1="1242" x2="1110" y2="1236" stroke="#334155" stroke-width="1.4"/>
+<line x1="1098" y1="1242" x2="1110" y2="1248" stroke="#334155" stroke-width="1.4"/>
+<circle cx="1093" cy="1242" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="1122" y="1246" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">one → zero or many</text>
+<line x1="1040" y1="1266" x2="1110" y2="1266" stroke="#334155" stroke-width="1.4"/>
+<line x1="1047" y1="1260" x2="1047" y2="1272" stroke="#334155" stroke-width="1.4"/>
+<circle cx="1056" cy="1266" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<line x1="1098" y1="1266" x2="1110" y2="1260" stroke="#334155" stroke-width="1.4"/>
+<line x1="1098" y1="1266" x2="1110" y2="1272" stroke="#334155" stroke-width="1.4"/>
+<circle cx="1093" cy="1266" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="1122" y="1270" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">zero or one → zero or many (nullable FK)</text>
+<line x1="1040" y1="1290" x2="1110" y2="1290" stroke="#334155" stroke-width="1.4"/>
+<line x1="1047" y1="1284" x2="1047" y2="1296" stroke="#334155" stroke-width="1.4"/>
+<line x1="1052" y1="1284" x2="1052" y2="1296" stroke="#334155" stroke-width="1.4"/>
+<line x1="1103" y1="1284" x2="1103" y2="1296" stroke="#334155" stroke-width="1.4"/>
+<circle cx="1094" cy="1290" r="4" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="1122" y="1294" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">one → zero or one</text>
+<line x1="1440" y1="1242" x2="1510" y2="1242" stroke="#64748B" stroke-width="1.4" stroke-dasharray="5 3"/>
+<text x="1520" y="1246" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">logical relation (no constraint)</text>
+<rect x="1440" y="1258" width="30" height="16" rx="8" fill="#2563EB"/>
+<text x="1455" y="1270" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9.5" font-weight="800" fill="#FFFFFF" text-anchor="middle">RLS</text>
+<text x="1480" y="1270" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">row-level security on table</text>
+<text x="34" y="1306" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">Logical links (no FK): ticket_messages.bot_run_id ↔ bot_runs.message_id · bot_runs.user_id → users.id · kb_sections.parent_id → kb_sections.id</text>
+<text x="1440" y="1292" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">ON DELETE: CASCADE; nullable FKs to users and</text>
+<text x="1440" y="1308" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#475569" text-anchor="start">tickets: SET NULL (not ticket_messages.author_id)</text>
+</svg>

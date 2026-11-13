@@ -3,6 +3,8 @@
 All tables live in the **same `helpdesk` database as feature 001** on the shared
 PostgreSQL 18 server (plan D7). All changes are additive Drizzle migrations on top of 001. Requires the `vector` extension (pgvector image, see plan).
 
+![Database schema](db-schema.svg)
+
 ```
 kb_sources 1──* kb_sections 1──* kb_chunks          kb_articles (approved Q&A)
                    │  ▲ parent_id (tree)                  │ source_ticket_id ──▶ tickets

@@ -6,6 +6,8 @@ Read with: [spec](spec.md) · [data model](data-model.md) · [knowledge ingestio
 
 ## Architecture
 
+![RAG architecture](rag-architecture.svg)
+
 ```
 User ──POST message──▶ API (Cloud Run "helpdesk")
                          │ 1. save message, status unchanged, bot_state=queued
