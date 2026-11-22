@@ -21,6 +21,8 @@ import { AppError } from './errors.ts';
 import { authenticate } from './plugins/auth.ts';
 import { adminRoutes } from './routes/admin.ts';
 import { userRoutes } from './routes/user.ts';
+import { internalRoutes } from './routes/internal.ts';
+import { disabledBotRuntime, type BotRuntime } from './bot/runtime.ts';
 
 export interface AppDeps {
   env: Pick<
@@ -36,10 +38,19 @@ export interface AppDeps {
   db: Database;
   pingDb: () => Promise<boolean>;
   verifier: TokenVerifier;
+  /** AI assistant wiring (feature 002); disabled when omitted. */
+  bot?: BotRuntime;
   logger?: FastifyServerOptions['logger'];
 }
 
-export async function buildApp({ env, db, pingDb, verifier, logger = false }: AppDeps) {
+export async function buildApp({
+  env,
+  db,
+  pingDb,
+  verifier,
+  bot = disabledBotRuntime(),
+  logger = false,
+}: AppDeps) {
   const app = Fastify({
     logger,
     trustProxy: true, // behind Google Front End on Cloud Run
@@ -140,12 +151,15 @@ export async function buildApp({ env, db, pingDb, verifier, logger = false }: Ap
 
       await api.register(async (authed) => {
         authed.addHook('onRequest', authenticate({ db, verifier, adminEmails: env.ADMIN_EMAILS }));
-        await authed.register(userRoutes, { db });
-        await authed.register(adminRoutes, { db, prefix: '/admin' });
+        await authed.register(userRoutes, { db, bot });
+        await authed.register(adminRoutes, { db, bot, prefix: '/admin' });
       });
     },
     { prefix: '/api' },
   );
+
+  // ------------------------------------------------------------ internal (Cloud Tasks)
+  await app.register(internalRoutes, { db, bot, prefix: '/internal' });
 
   // ------------------------------------------------------------ SPA
   const webDir = env.WEB_DIST_DIR ? path.resolve(env.WEB_DIST_DIR) : undefined;
@@ -166,7 +180,7 @@ export async function buildApp({ env, db, pingDb, verifier, logger = false }: Ap
   }
 
   app.setNotFoundHandler((request, reply) => {
-    const isApi = request.url.startsWith('/api');
+    const isApi = request.url.startsWith('/api') || request.url.startsWith('/internal');
     if (!isApi && serveSpa && request.method === 'GET') {
       reply.header('cache-control', 'no-cache');
       return reply.sendFile('index.html');

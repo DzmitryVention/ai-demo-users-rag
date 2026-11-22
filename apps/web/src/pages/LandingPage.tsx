@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../auth/AuthProvider.tsx';
 import { homeFor } from '../auth/guards.tsx';
 import { Logo, ThemeToggle } from '../components/AppShell.tsx';
+import dusterSketch from '../assets/duster-sketch.webp';
 import { Button, ErrorState, Spinner } from '../components/ui/index.tsx';
 
 function GoogleIcon() {
@@ -90,14 +91,18 @@ export function LandingPage() {
         <ThemeToggle />
       </header>
 
-      <main className="mx-auto max-w-3xl px-6 pt-16 pb-24 text-center sm:pt-24">
+      <main className="mx-auto max-w-3xl px-6 pt-2 pb-24 text-center sm:pt-4">
         <h1 className="text-4xl font-bold tracking-tight text-balance sm:text-6xl">
           How can we help you today?
         </h1>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-pretty text-slate-600 dark:text-slate-400">
-          Sign in with Google to reach our support team, track your requests and keep your profile
-          up to date.
-        </p>
+        <img
+          src={dusterSketch}
+          alt="Pencil sketch of a Renault Duster"
+          width={720}
+          height={526}
+          fetchPriority="high"
+          className="mx-auto mt-2 w-full max-w-md drop-shadow-xl select-none sm:max-w-lg"
+        />
 
         <div className="mt-10 flex flex-col items-center gap-4">
           <Button

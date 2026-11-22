@@ -5,14 +5,15 @@ Google sign-in web app: users open support requests; admins (emails listed in
 
 Built with **Spec-Driven Development** — start with [`specs/`](specs/):
 
-|                                                             |                                           |
-| ----------------------------------------------------------- | ----------------------------------------- |
-| [Constitution](specs/constitution.md)                       | Principles every change follows           |
-| [Spec](specs/001-users-helpdesk/spec.md)                    | User stories & acceptance criteria        |
-| [Plan](specs/001-users-helpdesk/plan.md)                    | Architecture, stack, GCP free-tier design |
-| [Data model](specs/001-users-helpdesk/data-model.md)        | Tables, status machine, migrations        |
-| [Contract](specs/001-users-helpdesk/contracts/openapi.json) | OpenAPI generated from shared Zod schemas |
-| [Tasks](specs/001-users-helpdesk/tasks.md)                  | Implementation checklist                  |
+|                                                                        |                                           |
+| ---------------------------------------------------------------------- | ----------------------------------------- |
+| [Constitution](specs/constitution.md)                                  | Principles every change follows           |
+| [Spec](specs/001-users-helpdesk/spec.md)                               | User stories & acceptance criteria        |
+| [Plan](specs/001-users-helpdesk/plan.md)                               | Architecture, stack, GCP free-tier design |
+| [Data model](specs/001-users-helpdesk/data-model.md)                   | Tables, status machine, migrations        |
+| [Contract](specs/001-users-helpdesk/contracts/openapi.json)            | OpenAPI generated from shared Zod schemas |
+| [Tasks](specs/001-users-helpdesk/tasks.md)                             | Implementation checklist                  |
+| [Feature 002 — AI support assistant](specs/002-ai-support-bot/spec.md) | Approved: RAG bot, hand-off, guardrails   |
 
 ## Stack
 

@@ -8,3 +8,4 @@
 infra
 specs
 *.md
+!apps/api/kb/**

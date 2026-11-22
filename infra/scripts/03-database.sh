@@ -10,12 +10,12 @@ gc secrets add-iam-policy-binding "${SECRET_DB_PASSWORD}" \
   --member "serviceAccount:${DB_SA}" --role roles/secretmanager.secretAccessor >/dev/null
 ok "Secret ${SECRET_DB_PASSWORD} ready"
 
-log "Mirroring postgres:${POSTGRES_VERSION}-alpine into Artifact Registry"
+log "Building PostgreSQL ${POSTGRES_VERSION} + pgvector ${PGVECTOR_VERSION} image"
 if ! gc artifacts docker images describe "${POSTGRES_IMAGE}" >/dev/null 2>&1; then
-  gc builds submit --no-source --region "${REGION}" \
+  gc builds submit "${INFRA_DIR}/db-vm" --region "${REGION}" \
     --service-account "projects/${PROJECT_ID}/serviceAccounts/${BUILD_SA}" \
-    --config "${INFRA_DIR}/cloudbuild.mirror.yaml" \
-    --substitutions "_SOURCE=postgres:${POSTGRES_VERSION}-alpine,_TARGET=${POSTGRES_IMAGE}"
+    --config "${INFRA_DIR}/cloudbuild.postgres.yaml" \
+    --substitutions "_TARGET=${POSTGRES_IMAGE},_PGVECTOR_VERSION=${PGVECTOR_VERSION}"
 fi
 ok "Image ${POSTGRES_IMAGE}"
 
@@ -55,9 +55,27 @@ if ! gc compute instances describe "${DB_VM}" --zone "${ZONE}" >/dev/null 2>&1; 
     --metadata-from-file "user-data=${USER_DATA}" \
     --metadata "google-logging-enabled=true,google-monitoring-enabled=true,enable-oslogin=true"
 else
-  gc compute instances add-metadata "${DB_VM}" --zone "${ZONE}" \
-    --metadata-from-file "user-data=${USER_DATA}" >/dev/null
-  warn "VM exists; metadata updated (takes effect on next reboot: gcloud compute instances reset ${DB_VM})"
+  CURRENT="$(gc compute instances describe "${DB_VM}" --zone "${ZONE}" \
+    --format='value(metadata.items.user-data)')"
+  if [[ "${CURRENT}" != "$(cat "${USER_DATA}")" ]]; then
+    gc compute instances add-metadata "${DB_VM}" --zone "${ZONE}" \
+      --metadata-from-file "user-data=${USER_DATA}" >/dev/null
+    # cloud-init applies user-data at boot. The data disk is kept; the container is
+    # re-created from the new image (same Postgres major and libc).
+    warn "DB VM configuration changed — restarting ${DB_VM} (about 1 minute of DB downtime)"
+    # stop/start (not reset) so Postgres shuts down cleanly.
+    gc compute instances stop "${DB_VM}" --zone "${ZONE}" >/dev/null
+    gc compute instances start "${DB_VM}" --zone "${ZONE}" >/dev/null
+    log "Waiting for PostgreSQL to accept connections"
+    for _ in $(seq 1 40); do
+      if gc compute instances get-serial-port-output "${DB_VM}" --zone "${ZONE}" 2>/dev/null |
+        grep -q "Started postgres.service"; then break; fi
+      sleep 6
+    done
+    sleep 20 # give the container time to finish starting the database
+  else
+    ok "VM configuration unchanged"
+  fi
 fi
 ok "VM ${DB_VM} running"
 

@@ -36,7 +36,7 @@ export function AdminTicketsPage() {
     <>
       <PageHeader title="Support requests" description="Answer users and keep the queue moving." />
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <StatusTabs value={status} onChange={setStatus} />
+        <StatusTabs value={status} onChange={setStatus} audience="admin" />
         <SearchInput
           value={search}
           onChange={(e) => {

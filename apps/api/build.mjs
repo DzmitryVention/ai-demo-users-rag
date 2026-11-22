@@ -7,7 +7,8 @@ const pkg = JSON.parse(await readFile(new URL('./package.json', import.meta.url)
 const external = Object.keys(pkg.dependencies ?? {}).filter((d) => !d.startsWith('@app/'));
 
 await build({
-  entryPoints: ['src/server.ts', 'src/migrate.ts'],
+  entryPoints: ['src/server.ts', 'src/migrate.ts', 'src/scripts/bot-setup.ts'],
+  entryNames: '[name]',
   outdir: 'dist',
   bundle: true,
   platform: 'node',

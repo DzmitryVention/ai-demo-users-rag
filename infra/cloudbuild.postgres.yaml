@@ -1,0 +1,13 @@
+# Builds the PostgreSQL + pgvector image for the DB VM and pushes it to Artifact Registry.
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --file=Dockerfile.postgres
+      - --build-arg=PGVECTOR_VERSION=${_PGVECTOR_VERSION}
+      - --tag=${_TARGET}
+      - .
+images: ['${_TARGET}']
+options:
+  logging: CLOUD_LOGGING_ONLY
+timeout: 1200s

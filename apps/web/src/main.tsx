@@ -15,6 +15,9 @@ import { LandingPage } from './pages/LandingPage.tsx';
 const AdminTicketPage = lazy(() =>
   import('./pages/admin/AdminTicketPage.tsx').then((m) => ({ default: m.AdminTicketPage })),
 );
+const AssistantPage = lazy(() =>
+  import('./pages/admin/AssistantPage.tsx').then((m) => ({ default: m.AssistantPage })),
+);
 const AdminTicketsPage = lazy(() =>
   import('./pages/admin/TicketsPage.tsx').then((m) => ({ default: m.AdminTicketsPage })),
 );
@@ -95,6 +98,14 @@ const router = createBrowserRouter([
         element: (
           <RequireRole role="admin">
             <AdminTicketsPage />
+          </RequireRole>
+        ),
+      },
+      {
+        path: '/admin/assistant',
+        element: (
+          <RequireRole role="admin">
+            <AssistantPage />
           </RequireRole>
         ),
       },

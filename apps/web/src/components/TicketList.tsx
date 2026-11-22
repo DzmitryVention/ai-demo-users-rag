@@ -26,7 +26,7 @@ export function TicketList({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <p className="truncate font-medium">{t.subject}</p>
-                <StatusBadge status={t.status} />
+                <StatusBadge status={t.status} audience={showRequester ? 'admin' : 'user'} />
               </div>
               {showRequester && (
                 <p className="text-xs text-slate-500">
@@ -54,6 +54,7 @@ export function TicketList({
 const filters: { value: TicketStatus | undefined; label: string }[] = [
   { value: undefined, label: 'All' },
   { value: 'open', label: 'Open' },
+  { value: 'pending_human', label: 'With support' },
   { value: 'answered', label: 'Answered' },
   { value: 'closed', label: 'Closed' },
 ];
@@ -61,9 +62,11 @@ const filters: { value: TicketStatus | undefined; label: string }[] = [
 export function StatusTabs({
   value,
   onChange,
+  audience = 'user',
 }: {
   value: TicketStatus | undefined;
   onChange: (v: TicketStatus | undefined) => void;
+  audience?: 'user' | 'admin';
 }) {
   return (
     <div
@@ -87,7 +90,7 @@ export function StatusTabs({
               : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100',
           )}
         >
-          {f.label}
+          {f.value === 'pending_human' && audience === 'admin' ? 'Needs human' : f.label}
         </button>
       ))}
     </div>

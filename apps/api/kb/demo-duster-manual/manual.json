@@ -1,0 +1,17 @@
+{
+  "title": "Renault Duster — Demo owner's guide",
+  "edition": "demo-2026.1",
+  "language": "en",
+  "licenceRef": "own-content",
+  "notice": "Demo knowledge base — not official Renault information. Check your vehicle's owner's manual.",
+  "officialManualUrl": "https://www.user-manual.renault.com/en/notice/24320/index",
+  "chapters": [
+    { "key": "welcome", "title": "Welcome aboard your vehicle" },
+    { "key": "getting-to-know", "title": "Getting to know your vehicle" },
+    { "key": "driving", "title": "Driving" },
+    { "key": "comfort", "title": "Your comfort" },
+    { "key": "maintenance", "title": "Maintenance" },
+    { "key": "practical", "title": "Practical advice" },
+    { "key": "technical", "title": "Technical specifications" }
+  ]
+}

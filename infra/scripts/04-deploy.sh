@@ -32,23 +32,56 @@ gc run jobs deploy "${MIGRATE_JOB}" \
 gc run jobs execute "${MIGRATE_JOB}" --region "${REGION}" --wait
 ok "Migrations applied"
 
+# ---- Feature 002: AI assistant (only when 05-bot.sh has created the Gemini key)
+PROJECT_NUMBER="$(gc projects describe "${PROJECT_ID}" --format='value(projectNumber)')"
+BOT_ENABLED=false
+if secret_exists "${SECRET_GEMINI_API_KEY}"; then
+  BOT_ENABLED=true
+  log "Loading the knowledge base and backfilling summaries (job ${SETUP_JOB})"
+  gc run jobs deploy "${SETUP_JOB}" \
+    --region "${REGION}" \
+    --image "${IMAGE}" \
+    --command node --args apps/api/dist/bot-setup.js \
+    --service-account "${RUN_SA}" \
+    --set-secrets "DATABASE_URL=${SECRET_DATABASE_URL}:latest,GEMINI_API_KEY=${SECRET_GEMINI_API_KEY}:latest" \
+    --set-env-vars "BOT_INITIAL_MODE=${BOT_INITIAL_MODE}" \
+    --cpu 1 --memory 512Mi --task-timeout 600s --max-retries 1 \
+    "${VPC_FLAGS[@]}"
+  if gc run jobs execute "${SETUP_JOB}" --region "${REGION}" --wait; then
+    ok "Knowledge base ready"
+  else
+    # Not fatal: the assistant stays off until the knowledge base is loaded.
+    warn "Bot setup failed (see job logs). Re-run later: gcloud run jobs execute ${SETUP_JOB} --region ${REGION}"
+  fi
+else
+  warn "Gemini key secret not found — deploying without the AI assistant (run 05-bot.sh)"
+fi
+
 log "Deploying Cloud Run service ${RUN_SERVICE}"
 # '^|^' switches the env-var delimiter so ADMIN_EMAILS may contain commas.
 ENV_VARS="^|^NODE_ENV=production|LOG_LEVEL=info|DB_POOL_MAX=5"
 ENV_VARS+="|ADMIN_EMAILS=${ADMIN_EMAILS}"
 ENV_VARS+="|FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}|FIREBASE_API_KEY=${FIREBASE_API_KEY}"
 ENV_VARS+="|FIREBASE_AUTH_DOMAIN=${FIREBASE_AUTH_DOMAIN}|FIREBASE_APP_ID=${FIREBASE_APP_ID}"
+SECRETS="DATABASE_URL=${SECRET_DATABASE_URL}:latest"
+if [[ "${BOT_ENABLED}" == true ]]; then
+  # Deterministic service URL, used as the Cloud Tasks target and OIDC audience.
+  TASKS_URL="https://${RUN_SERVICE}-${PROJECT_NUMBER}.${REGION}.run.app/internal/bot/tasks"
+  ENV_VARS+="|BOT_TASKS_QUEUE=projects/${PROJECT_ID}/locations/${REGION}/queues/${TASKS_QUEUE}"
+  ENV_VARS+="|BOT_TASKS_SA=${TASKS_SA}|BOT_TASKS_URL=${TASKS_URL}"
+  SECRETS+=",GEMINI_API_KEY=${SECRET_GEMINI_API_KEY}:latest"
+fi
 
 gc run deploy "${RUN_SERVICE}" \
   --region "${REGION}" \
   --image "${IMAGE}" \
   --service-account "${RUN_SA}" \
   --set-env-vars "${ENV_VARS}" \
-  --set-secrets "DATABASE_URL=${SECRET_DATABASE_URL}:latest" \
+  --set-secrets "${SECRETS}" \
   --execution-environment gen2 \
   --cpu 1 --memory 512Mi \
   --min-instances 0 --max-instances 3 --concurrency 80 \
-  --timeout 30s \
+  --timeout 120s \
   --startup-probe "httpGet.path=/api/health,initialDelaySeconds=0,periodSeconds=3,failureThreshold=10" \
   --no-invoker-iam-check \
   "${VPC_FLAGS[@]}"

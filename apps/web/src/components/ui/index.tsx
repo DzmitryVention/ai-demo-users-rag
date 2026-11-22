@@ -258,18 +258,42 @@ export function Avatar({
 const statusStyles: Record<TicketStatus, string> = {
   open: 'bg-amber-50 text-amber-800 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-300',
   answered: 'bg-sky-50 text-sky-800 ring-sky-600/20 dark:bg-sky-500/10 dark:text-sky-300',
+  pending_human:
+    'bg-violet-50 text-violet-800 ring-violet-600/20 dark:bg-violet-500/10 dark:text-violet-300',
   closed: 'bg-slate-100 text-slate-600 ring-slate-500/20 dark:bg-slate-800 dark:text-slate-400',
 };
 
-export function StatusBadge({ status }: { status: TicketStatus }) {
+export const statusLabel = (status: TicketStatus, audience: 'user' | 'admin' = 'user') =>
+  status === 'pending_human'
+    ? audience === 'admin'
+      ? 'Needs human'
+      : 'With support team'
+    : status.charAt(0).toUpperCase() + status.slice(1);
+
+export function StatusBadge({
+  status,
+  audience = 'user',
+}: {
+  status: TicketStatus;
+  audience?: 'user' | 'admin';
+}) {
   return (
     <span
       className={clsx(
-        'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ring-1 ring-inset',
+        'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ring-1 ring-inset',
         statusStyles[status],
       )}
     >
-      {status}
+      {statusLabel(status, audience)}
+    </span>
+  );
+}
+
+/** Marks everything written by the AI assistant (spec D-Q2: always shown). */
+export function AiBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-brand-600 to-fuchsia-600 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-white uppercase">
+      AI assistant
     </span>
   );
 }
